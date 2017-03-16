@@ -1,0 +1,59 @@
+<dom-module id="app-login">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      .card-container {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+      }
+
+      paper-card {
+        width: 40%;
+        margin-top: 30px;
+        --paper-card-header-color: var(--primary-color);
+        @apply(--layout-vertical);
+        padding: 20px;
+      }
+
+      paper-button {
+        @apply(--action-button);
+        @apply(--layout-flex);
+        margin-top: 20px;
+        text-align: center;
+        color: white;
+        padding: 20px;
+      }
+
+      iron-icon {
+        @apply(--icon);
+      }
+    </style>
+
+    <div class="card-container">
+      <paper-card heading="Login">
+        <div class="card-content">
+          <paper-input type="text" label="Email">
+            <iron-icon icon="mail" suffix></iron-icon>
+          </paper-input>
+          <paper-input type="password" label="Password"></paper-input>
+        </div>
+        <paper-button>Login</paper-button>
+      </paper-card>
+    </div>
+
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'app-login'
+
+    });
+  </script>
+
+</dom-module>
