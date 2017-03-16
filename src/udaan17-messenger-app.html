@@ -1,0 +1,47 @@
+<link rel="import" href="elements.html">
+
+<dom-module id="udaan17-messenger-app">
+  <template>
+
+    <style>
+      :host {
+        display: block;
+      }
+
+      app-toolbar {
+        @apply(--toolbar);
+      }
+
+    </style>
+
+    <app-header>
+      <app-toolbar main-title>Messenger</app-toolbar>
+    </app-header>
+
+    <app-location route="{{route}}" use-hash-as-path></app-location>
+
+    <app-route route="{{route}}" pattern="/login" active="{{loginActive}}"></app-route>
+    <app-route route="{{route}}" pattern="/current" active="{{currentActive}}"></app-route>
+
+    <template is="dom-if" restmap if="{{loginActive}}">
+      <app-login></app-login>
+    </template>
+
+    <template is="dom-if" restmap if="{{currentActive}}">
+      <current-round></current-round>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'udaan17-messenger-app',
+
+      attached: function () {
+        this.set('route.path', '/login')
+      }
+
+    });
+  </script>
+</dom-module>
