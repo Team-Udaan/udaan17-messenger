@@ -11,12 +11,32 @@
       #send {
         @apply(--action-button);
         @apply(--layout-self-center);
-        width: 100px;
+        width: 200px;
+        margin: 30px;
+      }
+
+      #send[disabled] {
+        background-color: var(--paper-deep-purple-100);
+      }
+
+      paper-datatable {
+        --paper-datatable-row-selection-color: var(--accent-background-color);
+        --paper-datatable-row-hover-color: var(--accent-background-color);
+        overflow-y: hidden;
+        width: 90vw;
+        @apply(--layout-self-center);
+        border: 1px solid #DBDBDB;
+        margin-top: 20px;
+        --paper-datatable-column-header: {
+          font-size: 20px;
+          color: var(--primary-color);
+        };
       }
 
       paper-dialog {
         width: 70vw;
       }
+
     </style>
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
@@ -44,7 +64,7 @@
       </paper-datatable-column>
     </paper-datatable>
 
-    <paper-button id="send" raised on-tap="confirmSend" disabled="{{isEmpty(selectedParticipations)}}">Send
+    <paper-button id="send" on-tap="confirmSend" disabled="{{isEmpty(selectedParticipations)}}">Send
     </paper-button>
 
     <paper-dialog id="confirmationDialog" modal
