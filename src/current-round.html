@@ -5,6 +5,17 @@
     <style>
       :host {
         display: block;
+        @apply(--layout-vertical);
+      }
+
+      #send {
+        @apply(--action-button);
+        @apply(--layout-self-center);
+        width: 100px;
+      }
+
+      paper-dialog {
+        width: 70vw;
       }
     </style>
 
@@ -12,9 +23,9 @@
 
     <!-- Todo: Add URL -->
     <iron-ajax url="{{url}}"
-    handle-as="json"
-    last-response="{{participation}}"
-    loading="{{loading}}">
+               handle-as="json"
+               last-response="{{participation}}"
+               loading="{{loading}}">
     </iron-ajax>
 
     <iron-data-table items="[[participation]]" selection-enabled multi-selection on-selecting-item="sendObject">
@@ -28,6 +39,22 @@
         <template>[[item.mobile]]</template>
       </data-table-column>
     </iron-data-table>
+
+    <paper-button id="send" raised on-tap="confirmSend">Send</paper-button>
+
+    <paper-dialog id="confirmationDialog" modal
+                  entry-animation="scale-up-animation"
+                  exit-animation="scale-down-animation">
+      <div>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium, aperiam, qui! Consequuntur culpa delectus
+        dignissimos doloremque doloribus eum ipsa laudantium, modi pariatur perferendis quo saepe suscipit voluptate?
+        Accusantium, beatae, ullam.
+      </div>
+      <div class="buttons">
+        <paper-button on-tap="sendMessages">Confirm Send</paper-button>
+        <paper-button on-tap="closeModal">Close</paper-button>
+      </div>
+    </paper-dialog>
 
   </template>
 
@@ -54,6 +81,19 @@
             }
           ]
         }
+      },
+
+      confirmSend: function () {
+        this.$.confirmationDialog.open();
+      },
+
+      sendMessages: function () {
+        // Todo: Add send logic
+        this.$.confirmationDialog.close();
+      },
+
+      closeModal: function () {
+        this.$.confirmationDialog.close();
       }
 
     });
