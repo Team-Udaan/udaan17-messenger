@@ -31,19 +31,21 @@
                loading="{{loading}}">
     </iron-ajax>
 
-    <iron-data-table items="[[participation]]" selection-enabled multi-selection on-selecting-item="sendObject">
-      <data-table-column name="Receipt Number">
+    <paper-datatable id="table" data="[[participation]]" selectable multi-selection
+                     selected-items="{{selectedParticipations}}">
+      <paper-datatable-column header="Receipt Number" property="receiptNo">
         <template>[[item.receiptNo]]</template>
-      </data-table-column>
-      <data-table-column name="Name">
+      </paper-datatable-column>
+      <paper-datatable-column header="Name" property="name">
         <template>[[item.name]]</template>
-      </data-table-column>
-      <data-table-column name="Mobile Number">
+      </paper-datatable-column>
+      <paper-datatable-column header="Mobile Number" property="mobile">
         <template>[[item.mobile]]</template>
-      </data-table-column>
-    </iron-data-table>
+      </paper-datatable-column>
+    </paper-datatable>
 
-    <paper-button id="send" raised on-tap="confirmSend">Send</paper-button>
+    <paper-button id="send" raised on-tap="confirmSend" disabled="{{isEmpty(selectedParticipations)}}">Send
+    </paper-button>
 
     <paper-dialog id="confirmationDialog" modal
                   entry-animation="scale-up-animation"
@@ -85,17 +87,19 @@
               }
             ]
           }
-        },
-        selectedParticipant: {
-          type: Object,
-          value: function () {
-            return {};
-          }
         }
       },
 
+      isEmpty: function (array) {
+        return array.length == 0;
+      },
+
       confirmSend: function () {
+        this.selectedIds = this.$.table.selectedItems.map(function (item) {
+          return item.id;
+        });
         this.$.confirmationDialog.open();
+
       },
 
       sendMessages: function () {

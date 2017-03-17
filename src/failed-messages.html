@@ -17,17 +17,17 @@
                loading="{{loading}}">
     </iron-ajax>
 
-    <iron-data-table items="[[failedParticipation]]">
-      <data-table-column name="Receipt Number">
+    <paper-datatable items="[[failedParticipation]]">
+      <paper-datatable-column name="Receipt Number">
         <template>[[item.receiptNo]]</template>
-      </data-table-column>
-      <data-table-column name="Name">
+      </paper-datatable-column>
+      <paper-datatable-column name="Name">
         <template>[[item.name]]</template>
-      </data-table-column>
-      <data-table-column name="Mobile Number">
+      </paper-datatable-column>
+      <paper-datatable-column name="Mobile Number">
         <template>[[item.mobile]]</template>
-      </data-table-column>
-    </iron-data-table>
+      </paper-datatable-column>
+    </paper-datatable>
 
   </template>
 
