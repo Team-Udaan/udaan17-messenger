@@ -10,14 +10,53 @@
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
 
-    <!-- Todo: Show list of failed messages -->
+    <iron-ajax url="{{url}}"
+               handle-as="json"
+               last-response="{{failedParticipation}}"
+               on-error="handleError"
+               loading="{{loading}}">
+    </iron-ajax>
+
+    <iron-data-table items="[[failedParticipation]]">
+      <data-table-column name="Receipt Number">
+        <template>[[item.receiptNo]]</template>
+      </data-table-column>
+      <data-table-column name="Name">
+        <template>[[item.name]]</template>
+      </data-table-column>
+      <data-table-column name="Mobile Number">
+        <template>[[item.mobile]]</template>
+      </data-table-column>
+    </iron-data-table>
 
   </template>
 
   <script>
     Polymer({
 
-      is: 'failed-massages'
+      is: 'failed-messages',
+
+      properties: {
+        failedParticipation: {
+          type: Array,
+          value: function () {
+            return [
+              {
+                'id': 1,
+                'receiptNo': 'A/01/055',
+                'name': 'Mukesh Kumar',
+                'mobile': '9876543120'
+              },
+              {
+                'id': 2,
+                'receiptNo': 'A/02/056',
+                'name': 'Manish Kumar',
+                'mobile': '7894561320'
+              }
+            ]
+          }
+        }
+      }
 
     });
   </script>

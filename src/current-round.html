@@ -23,8 +23,11 @@
 
     <!-- Todo: Add URL -->
     <iron-ajax url="{{url}}"
-               handle-as="json"
+               method="POST"
+               content-type="application/json"
+               body="{{selectedParticipants}}"
                last-response="{{participation}}"
+               on-error="handleError"
                loading="{{loading}}">
     </iron-ajax>
 
@@ -66,20 +69,28 @@
       properties: {
         participation: {
           type: Array,
-          value: [
-            {
-              'id': 1,
-              'receiptNo': 'A/01/055',
-              'name': 'Mukesh Kumar',
-              'mobile': '9876543120'
-            },
-            {
-              'id': 2,
-              'receiptNo': 'A/02/056',
-              'name': 'Manish Kumar',
-              'mobile': '7894561320'
-            }
-          ]
+          value: function () {
+            return [
+              {
+                'id': 1,
+                'receiptNo': 'A/01/055',
+                'name': 'Mukesh Kumar',
+                'mobile': '9876543120'
+              },
+              {
+                'id': 2,
+                'receiptNo': 'A/02/056',
+                'name': 'Manish Kumar',
+                'mobile': '7894561320'
+              }
+            ]
+          }
+        },
+        selectedParticipant: {
+          type: Object,
+          value: function () {
+            return {};
+          }
         }
       },
 
@@ -90,6 +101,7 @@
       sendMessages: function () {
         // Todo: Add send logic
         this.$.confirmationDialog.close();
+        this.set('route.path', '/failed');
       },
 
       closeModal: function () {
