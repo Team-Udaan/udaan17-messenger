@@ -4,7 +4,8 @@
   "main": "index.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",
-    "app-elements": "^0.10.1"
+    "app-elements": "^0.10.1",
+    "iron-data-table": "^1.0.6"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
