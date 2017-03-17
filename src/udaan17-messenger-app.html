@@ -22,7 +22,6 @@
 
     <app-route route="{{route}}" pattern="/login" active="{{loginActive}}"></app-route>
     <app-route route="{{route}}" pattern="/current" active="{{currentActive}}"></app-route>
-    <app-route route="{{route}}" pattern="/failed" active="{{failedActive}}"></app-route>
 
     <template is="dom-if" restamp if="{{loginActive}}">
       <app-login></app-login>
@@ -30,10 +29,6 @@
 
     <template is="dom-if" restamp if="{{currentActive}}">
       <current-round></current-round>
-    </template>
-
-    <template is="dom-if" restamp if="{{failedActive}}">
-      <failed-messages></failed-messages>
     </template>
 
   </template>
