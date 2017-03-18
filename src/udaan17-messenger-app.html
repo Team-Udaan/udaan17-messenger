@@ -1,5 +1,3 @@
-<link rel="import" href="elements.html">
-
 <dom-module id="udaan17-messenger-app">
   <template>
 
@@ -21,14 +19,19 @@
     <app-location route="{{route}}" use-hash-as-path></app-location>
 
     <app-route route="{{route}}" pattern="/login" active="{{loginActive}}"></app-route>
-    <app-route route="{{route}}" pattern="/current" active="{{currentActive}}"></app-route>
+    <app-route route="{{route}}" pattern="/participations" active="{{participationsActive}}"></app-route>
+    <app-route route="{{route}}" pattern="/report" active="{{reportActive}}"></app-route>
 
     <template is="dom-if" restamp if="{{loginActive}}">
-      <app-login></app-login>
+      <app-login config="{{config}}"></app-login>
     </template>
 
-    <template is="dom-if" restamp if="{{currentActive}}">
-      <current-round></current-round>
+    <template is="dom-if" restamp if="{{participationsActive}}">
+      <current-round config={{config}}></current-round>
+    </template>
+
+    <template is="dom-if" restamp if="{{reportActive}}">
+      <message-report config="{{config}}"></message-report>
     </template>
 
   </template>
@@ -38,9 +41,24 @@
 
       is: 'udaan17-messenger-app',
 
-//      attached: function () {
-//        this.set('route.path', '/login')
-//      }
+      properties: {
+        config: {
+          type: Object,
+          value: function () {
+            return {
+              'urls': {
+                'login': baseUrl + '/login',
+                'participations': baseUrl + '/participations',
+                'report': baseUrl + '/report'
+              }
+            }
+          }
+        }
+      },
+
+      attached: function () {
+        this.set('route.path', '/login')
+      }
 
     });
   </script>
