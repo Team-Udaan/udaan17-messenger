@@ -4,6 +4,7 @@
     <style>
       :host {
         display: block;
+        @apply(--layout-vertical);
       }
 
       .card-container {
@@ -27,6 +28,10 @@
         padding: 20px;
       }
 
+      #login[disabled] {
+        background-color: var(--paper-deep-purple-100);
+      }
+
       iron-icon {
         @apply(--icon);
       }
@@ -39,20 +44,34 @@
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
 
+    <iron-ajax url="{{config.urls.login}}"
+               method="POST"
+               content-type="application/json"
+               body="{{credentials}}"
+               on-response="handleResponse"
+               on-error="handleError"
+               loading="{{loading}}"
+               id="ajax">
+    </iron-ajax>
+
     <div class="card-container">
       <paper-card heading="Login">
         <div class="card-content">
-          <paper-input type="text" label="Email ID" value="{{email}}" autocompelete autofocus>
+          <paper-input type="text" label="Email ID" id="email" value="{{credentials.email}}" autocompelete autofocus>
             <iron-icon icon="mail" suffix></iron-icon>
           </paper-input>
-          <paper-input type="password" label="Password" value="{{password}}"></paper-input>
+          <paper-input type="password" label="Password" id="password" value="{{credentials.password}}"
+                       minlength="8" maxlength="8">
+          </paper-input>
         </div>
-        <paper-button on-tap="login">Login</paper-button>
+        <paper-button on-tap="login" disabled="{{loading}}" id="login">
+          <span hidden="{{loading}}">Login</span>
+          <paper-spinner alt="Verifying Credentials" active="{{loading}}"></paper-spinner>
+        </paper-button>
       </paper-card>
     </div>
 
-    <paper-toast id="errorToast" duration="3000"></paper-toast>
-
+    <paper-toast id="errorToast" duration="3000" text="{{errorMessage}}"></paper-toast>
 
   </template>
 
@@ -61,20 +80,63 @@
 
       is: 'app-login',
 
+      properties: {
+        config: {
+          type: Object
+        },
+        credentials: {
+          type: Object,
+          value: function () {
+            return {}
+          }
+        },
+        errorMessage: {
+          type: String
+        }
+      },
+
       login: function () {
-        if (!this.email) {
-          this.$.errorToast.text = "Email Id is required";
+        if (!this.credentials.email) {
+          this.errorMessage = "Email Id is required";
           this.$.errorToast.open();
         }
-        else if(!/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/.test(this.email)) {
-          this.$.errorToast.text = "Enter a proper Email ID"
+        else if (!/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/.test(this.credentials.email)) {
+          this.errorMessage = "Enter a proper Email ID";
           this.$.errorToast.open();
         }
-        else if (!this.password) {
-          this.$.errorToast.text = "Password is required";
+        else if (!this.credentials.password) {
+          this.errorMessage = "Password is required";
           this.$.errorToast.open();
         }
-        else this.set('route.path', '/current')
+        else if (this.credentials.password.length != 8) {
+          this.errorMessage = "Password must have 8 characters";
+          this.$.errorToast.open();
+        }
+        else {
+          this.$.ajax.generateRequest();
+        }
+      },
+
+      handleResponse: function (event) {
+        var response = event.detail.response;
+        if (response.success) this.set('route.path', '/participations');
+        else {
+          if (response.error.indexOf('email') != -1) {
+            this.$.email.value = "";
+            this.$.email.focus();
+          }
+          else if (response.error.indexOf('password') != -1) {
+            this.$.password.value = "";
+            this.$.password.focus();
+          }
+          this.errorMessage = response.error;
+          this.$.errorToast.open();
+        }
+      },
+
+      handleError: function () {
+        this.errorMessage = "Internet Required";
+        this.$.errorToast.open();
       }
 
     });

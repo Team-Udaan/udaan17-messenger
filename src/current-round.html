@@ -41,8 +41,7 @@
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
 
-    <!-- Todo: Add URL -->
-    <iron-ajax url="{{url}}"
+    <iron-ajax url="config.urls.participations"
                method="POST"
                content-type="application/json"
                body="{{selectedParticipants}}"
@@ -89,6 +88,9 @@
       is: 'current-round',
 
       properties: {
+        config: {
+          type: Object
+        },
         participation: {
           type: Array,
           value: function () {
@@ -125,7 +127,7 @@
       sendMessages: function () {
         // Todo: Add send logic
         this.$.confirmationDialog.close();
-        this.set('route.path', '/failed');
+        this.set('route.path', '/report');
       },
 
       closeModal: function () {
