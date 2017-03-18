@@ -1,4 +1,4 @@
-<dom-module id="current-round">
+<dom-module id="messenger-dashboard">
 
   <template>
 
@@ -41,14 +41,18 @@
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
 
-    <iron-ajax url="config.urls.participations"
+    <iron-ajax url="config.urls.dashboard"
                method="POST"
                content-type="application/json"
                body="{{selectedParticipants}}"
                last-response="{{participation}}"
                on-error="handleError"
-               loading="{{loading}}">
+               loading="{{loading}}"
+               id="ajax">
     </iron-ajax>
+
+    <app-toolbar main-title="{{participations.eventName}}"></app-toolbar>
+    <app-toolbar main-title="{{participations.current}}"></app-toolbar>
 
     <paper-datatable id="table" data="[[participation]]" selectable multi-selection
                      selected-items="{{selectedParticipations}}">
@@ -85,7 +89,7 @@
   <script>
     Polymer({
 
-      is: 'current-round',
+      is: 'messenger-dashboard',
 
       properties: {
         config: {
@@ -127,7 +131,7 @@
       sendMessages: function () {
         // Todo: Add send logic
         this.$.confirmationDialog.close();
-        this.set('route.path', '/report');
+        this.set('route.path', '/status');
       },
 
       closeModal: function () {

@@ -1,4 +1,4 @@
-<dom-module id="app-login">
+<dom-module id="messenger-login">
 
   <template>
     <style>
@@ -47,7 +47,7 @@
     <iron-ajax url="{{config.urls.login}}"
                method="POST"
                content-type="application/json"
-               body="{{credentials}}"
+               body="{{config.credentials}}"
                on-response="handleResponse"
                on-error="handleError"
                loading="{{loading}}"
@@ -57,10 +57,10 @@
     <div class="card-container">
       <paper-card heading="Login">
         <div class="card-content">
-          <paper-input type="text" label="Email ID" id="email" value="{{credentials.email}}" autocompelete autofocus>
+          <paper-input type="text" label="Email ID" id="email" value="{{config.credentials.email}}" autocompelete autofocus>
             <iron-icon icon="mail" suffix></iron-icon>
           </paper-input>
-          <paper-input type="password" label="Password" id="password" value="{{credentials.password}}"
+          <paper-input type="password" label="Password" id="password" value="{{config.credentials.password}}"
                        minlength="8" maxlength="8">
           </paper-input>
         </div>
@@ -78,17 +78,11 @@
   <script>
     Polymer({
 
-      is: 'app-login',
+      is: 'messenger-login',
 
       properties: {
         config: {
           type: Object
-        },
-        credentials: {
-          type: Object,
-          value: function () {
-            return {}
-          }
         },
         errorMessage: {
           type: String
@@ -96,19 +90,19 @@
       },
 
       login: function () {
-        if (!this.credentials.email) {
+        if (!this.config.credentials.email) {
           this.errorMessage = "Email Id is required";
           this.$.errorToast.open();
         }
-        else if (!/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/.test(this.credentials.email)) {
+        else if (!/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/.test(this.config.credentials.email)) {
           this.errorMessage = "Enter a proper Email ID";
           this.$.errorToast.open();
         }
-        else if (!this.credentials.password) {
+        else if (!this.config.credentials.password) {
           this.errorMessage = "Password is required";
           this.$.errorToast.open();
         }
-        else if (this.credentials.password.length != 8) {
+        else if (this.config.credentials.password.length != 8) {
           this.errorMessage = "Password must have 8 characters";
           this.$.errorToast.open();
         }
@@ -119,7 +113,7 @@
 
       handleResponse: function (event) {
         var response = event.detail.response;
-        if (response.success) this.set('route.path', '/participations');
+        if (response.success) this.set('route.path', '/dashboard');
         else {
           if (response.error.indexOf('email') != -1) {
             this.$.email.value = "";

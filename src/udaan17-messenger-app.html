@@ -19,18 +19,18 @@
     <app-location route="{{route}}" use-hash-as-path></app-location>
 
     <app-route route="{{route}}" pattern="/login" active="{{loginActive}}"></app-route>
-    <app-route route="{{route}}" pattern="/participations" active="{{participationsActive}}"></app-route>
-    <app-route route="{{route}}" pattern="/report" active="{{reportActive}}"></app-route>
+    <app-route route="{{route}}" pattern="/dashboard" active="{{dashboardActive}}"></app-route>
+    <app-route route="{{route}}" pattern="/status" active="{{statusActive}}"></app-route>
 
     <template is="dom-if" restamp if="{{loginActive}}">
       <app-login config="{{config}}"></app-login>
     </template>
 
-    <template is="dom-if" restamp if="{{participationsActive}}">
+    <template is="dom-if" restamp if="{{dashboardActive}}">
       <current-round config={{config}}></current-round>
     </template>
 
-    <template is="dom-if" restamp if="{{reportActive}}">
+    <template is="dom-if" restamp if="{{statusActive}}">
       <message-report config="{{config}}"></message-report>
     </template>
 
@@ -48,8 +48,12 @@
             return {
               'urls': {
                 'login': baseUrl + '/login',
-                'participations': baseUrl + '/participations',
-                'report': baseUrl + '/report'
+                'dashboard': baseUrl + '/dashboard',
+                'status': baseUrl + '/status'
+              },
+              'credentials': {
+                'email': '',
+                'password': ''
               }
             }
           }
