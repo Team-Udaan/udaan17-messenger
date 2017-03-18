@@ -1,0 +1,29 @@
+<dom-module id="message-report">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <app-location route="{{route}}" use-hash-as-path></app-location>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'message-report',
+
+      properties: {
+        config: {
+          type: Object
+        }
+      }
+
+    });
+  </script>
+
+</dom-module>
