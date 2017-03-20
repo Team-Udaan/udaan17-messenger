@@ -8,27 +8,33 @@
         @apply(--layout-vertical);
       }
 
-      #send {
-        @apply(--action-button);
-        @apply(--layout-self-center);
-        width: 200px;
-        margin: 30px;
+      .header {
+        @apply(--layout-around-justified);
+        color: var(--primary-color);
+        font-size: 25px;
       }
 
-      #send[disabled] {
+      #promote {
+        @apply(--action-button);
+        @apply(--layout-self-center);
+        font-size: 15px;
+        margin-top: 20px;
+      }
+
+      #promote[disabled] {
         background-color: var(--paper-deep-purple-100);
       }
 
       paper-datatable {
+        overflow-y: hidden;
         --paper-datatable-row-selection-color: var(--accent-background-color);
         --paper-datatable-row-hover-color: var(--accent-background-color);
-        overflow-y: hidden;
         width: 90vw;
         @apply(--layout-self-center);
         border: 1px solid #DBDBDB;
         margin-top: 20px;
         --paper-datatable-column-header: {
-          font-size: 20px;
+          font-size: 24px;
           color: var(--primary-color);
         };
       }
@@ -41,43 +47,59 @@
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
 
-    <iron-ajax url="config.urls.dashboard"
+    <iron-ajax url="{{config.urls.promote}}"
                method="POST"
                content-type="application/json"
-               body="{{selectedParticipants}}"
-               last-response="{{participation}}"
+               on-response="handleResponse"
                on-error="handleError"
                loading="{{loading}}"
                id="ajax">
     </iron-ajax>
 
-    <app-toolbar main-title="{{participations.eventName}}"></app-toolbar>
-    <app-toolbar main-title="{{participations.current}}"></app-toolbar>
+    <app-toolbar class="header">
+      <div>{{data.event}}</div>
+    </app-toolbar>
 
-    <paper-datatable id="table" data="[[participation]]" selectable multi-selection
+    <paper-datatable id="table" data="[[data.participations]]" selectable multi-selection
                      selected-items="{{selectedParticipations}}">
       <paper-datatable-column header="Receipt Number" property="receiptNo">
-        <template>[[item.receiptNo]]</template>
+        <template>[[item.receipt_no]]</template>
       </paper-datatable-column>
-      <paper-datatable-column header="Name" property="name">
-        <template>[[item.name]]</template>
+      <paper-datatable-column header="Name" property="name" id="name">
+        <!-- Todo: Add Multiple participants name -->
+        <template>
+          [[item.name_1]]<br hidden="[[!item.name_2]]">
+          [[item.name_2]]<br hidden="[[!item.name_3]]">
+          [[item.name_3]]<br hidden="[[!item.name_4]]">
+          [[item.name_4]]<br hidden="[[!item.name_5]]">
+          [[item.name_5]]<br hidden="[[!item.name_6]]">
+          [[item.name_6]]
+        </template>
       </paper-datatable-column>
       <paper-datatable-column header="Mobile Number" property="mobile">
         <template>[[item.mobile]]</template>
       </paper-datatable-column>
+      <paper-datatable-column header="Status" property="status">
+        <template>[[stringifyStatus(item.status)]]</template>
+      </paper-datatable-column>
     </paper-datatable>
 
-    <paper-button id="send" on-tap="confirmSend" disabled="{{isEmpty(selectedParticipations)}}">Send
+    <paper-button id="promote" on-tap="promote" disabled="{{isEmpty(selectedParticipations)}}">
+      Promote to round {{nextRound}}
     </paper-button>
 
-    <paper-dialog id="confirmationDialog" modal
-                  entry-animation="scale-up-animation"
+    <paper-dialog id="confirmationDialog" modal entry-animation="scale-up-animation"
                   exit-animation="scale-down-animation">
+
       <div>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium, aperiam, qui! Consequuntur culpa delectus
-        dignissimos doloremque doloribus eum ipsa laudantium, modi pariatur perferendis quo saepe suscipit voluptate?
-        Accusantium, beatae, ullam.
+        <paper-datetime-picker-item icon="icons:today" placeholder="Select date and time" date-format="DD/MMMM/YYYY"
+                                    time-format="h:mm a" locale="[[locale]]" id="dateTime" date="{{date}}">
+        </paper-datetime-picker-item>
+        <paper-input label="Enter Venue" char-counter maxlength="40" value="{{venue}}"></paper-input>
       </div>
+
+      <div>{{message}}</div>
+
       <div class="buttons">
         <paper-button on-tap="sendMessages">Confirm Send</paper-button>
         <paper-button on-tap="closeModal">Close</paper-button>
@@ -95,43 +117,81 @@
         config: {
           type: Object
         },
-        participation: {
+        data: {
+          type: Object
+        },
+        participationIds: {
           type: Array,
           value: function () {
-            return [
-              {
-                'id': 1,
-                'receiptNo': 'A/01/055',
-                'name': 'Mukesh Kumar',
-                'mobile': '9876543120'
-              },
-              {
-                'id': 2,
-                'receiptNo': 'A/02/056',
-                'name': 'Manish Kumar',
-                'mobile': '7894561320'
-              }
-            ]
+            return []
           }
+        },
+        nextRound: {
+          computed: 'computeNextRound(data)'
+        },
+        message: {
+          type: String,
+          computed: 'computeMessage(nextRound, data.event, date, venue)'
         }
+      },
+
+      attached: function () {
+        if (this.data.credentials.email)
+          localStorage.email = this.data.credentials.email;
+        if (this.data.credentials.password)
+          localStorage.password = this.data.credentials.password;
+      },
+
+      computeNextRound: function (data) {
+        return data.round + 1;
+      },
+
+      computeMessage: function (nextRound, event, date, venue) {
+        if (nextRound && event && date && venue)
+          return 'Dear Participant, Round ' + nextRound + ' of ' + event + ' is on ' +
+            moment(date).format('DD-MM-YYYY hh:mm A') + ' at ' + venue + '. Kindly be present at the venue on time.'
+      },
+
+      stringifyStatus: function (status) {
+        if (status == '!') return 'Sending';
+        if (status == 'D') return 'Delivered';
+        if (status == 'U') return 'Undelivered';
+        if (status == 'I') return 'Invalid number';
+        if (status == 'P' || status == '?') return 'Pending';
+        if (status == 'B') return 'Blocked';
+        if (status == 'E') return 'Expired';
       },
 
       isEmpty: function (array) {
         return array.length == 0;
       },
 
-      confirmSend: function () {
-        this.selectedIds = this.$.table.selectedItems.map(function (item) {
+      promote: function () {
+        this.participationIds = this.$.table.selectedItems.map(function (item) {
           return item.id;
         });
+        this.$.ajax.body = {
+          email: this.data.credentials.email,
+          password: this.data.credentials.password,
+          round: this.nextRound,
+          participationIds: this.participationIds,
+          time: this.date,
+          venue: this.venue
+        };
         this.$.confirmationDialog.open();
-
       },
 
       sendMessages: function () {
-        // Todo: Add send logic
-        this.$.confirmationDialog.close();
-        this.set('route.path', '/status');
+        this.$.ajax.generateRequest();
+      },
+
+      handleResponse: function (event) {
+        this.closeModal();
+        this.set('route.path', '/login');
+      },
+
+      handleError: function (event) {
+
       },
 
       closeModal: function () {

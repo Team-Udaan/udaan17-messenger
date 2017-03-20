@@ -20,18 +20,13 @@
 
     <app-route route="{{route}}" pattern="/login" active="{{loginActive}}"></app-route>
     <app-route route="{{route}}" pattern="/dashboard" active="{{dashboardActive}}"></app-route>
-    <app-route route="{{route}}" pattern="/status" active="{{statusActive}}"></app-route>
 
     <template is="dom-if" restamp if="{{loginActive}}">
-      <app-login config="{{config}}"></app-login>
+      <messenger-login config="{{config}}" data="{{data}}"></messenger-login>
     </template>
 
     <template is="dom-if" restamp if="{{dashboardActive}}">
-      <current-round config={{config}}></current-round>
-    </template>
-
-    <template is="dom-if" restamp if="{{statusActive}}">
-      <message-report config="{{config}}"></message-report>
+      <messenger-dashboard config="{{config}}" data="{{data}}"></messenger-dashboard>
     </template>
 
   </template>
@@ -46,15 +41,24 @@
           type: Object,
           value: function () {
             return {
-              'urls': {
-                'login': baseUrl + '/login',
-                'dashboard': baseUrl + '/dashboard',
-                'status': baseUrl + '/status'
-              },
-              'credentials': {
-                'email': '',
-                'password': ''
+              urls: {
+                data: baseUrl + '/data',
+                promote: baseUrl + '/promote'
               }
+            }
+          }
+        },
+        data: {
+          type: Object,
+          value: function () {
+            return {
+              credentials: {
+                email: '',
+                password: ''
+              },
+              event: '',
+              round: '',
+              participations: []
             }
           }
         }

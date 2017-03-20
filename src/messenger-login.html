@@ -12,6 +12,10 @@
         @apply(--layout-center);
       }
 
+      .button-container {
+        @apply(--layout-horizontal);
+      }
+
       paper-card {
         width: 40%;
         margin-top: 30px;
@@ -25,7 +29,6 @@
         @apply(--layout-flex);
         margin-top: 20px;
         text-align: center;
-        padding: 20px;
       }
 
       #login[disabled] {
@@ -44,10 +47,10 @@
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
 
-    <iron-ajax url="{{config.urls.login}}"
+    <iron-ajax url="{{config.urls.data}}"
                method="POST"
                content-type="application/json"
-               body="{{config.credentials}}"
+               body="{{data.credentials}}"
                on-response="handleResponse"
                on-error="handleError"
                loading="{{loading}}"
@@ -57,17 +60,21 @@
     <div class="card-container">
       <paper-card heading="Login">
         <div class="card-content">
-          <paper-input type="text" label="Email ID" id="email" value="{{config.credentials.email}}" autocompelete autofocus>
+          <paper-input type="text" label="Email ID" id="email" value="{{data.credentials.email}}" autocompelete
+                       autofocus>
             <iron-icon icon="mail" suffix></iron-icon>
           </paper-input>
-          <paper-input type="password" label="Password" id="password" value="{{config.credentials.password}}"
+          <paper-input type="password" label="Password" id="password" value="{{data.credentials.password}}"
                        minlength="8" maxlength="8">
           </paper-input>
         </div>
-        <paper-button on-tap="login" disabled="{{loading}}" id="login">
-          <span hidden="{{loading}}">Login</span>
-          <paper-spinner alt="Verifying Credentials" active="{{loading}}"></paper-spinner>
-        </paper-button>
+        <div class="button-container">
+          <paper-button on-tap="login" disabled="{{loading}}" id="login">
+            <span hidden="{{loading}}">Login</span>
+            <paper-spinner alt="Verifying Credentials" active="{{loading}}" hidden="{{!loading}}"></paper-spinner>
+          </paper-button>
+          <paper-button on-tap="reset" disabled="{{loading}}" id="reset">Reset</paper-button>
+        </div>
       </paper-card>
     </div>
 
@@ -84,25 +91,35 @@
         config: {
           type: Object
         },
+        data: {
+          type: Object
+        },
         errorMessage: {
           type: String
         }
       },
 
+      attached: function () {
+        if (localStorage.email && localStorage.password) {
+          this.$.email.value = localStorage.email;
+          this.$.password.value = localStorage.password;
+        }
+      },
+
       login: function () {
-        if (!this.config.credentials.email) {
+        if (!this.data.credentials.email) {
           this.errorMessage = "Email Id is required";
           this.$.errorToast.open();
         }
-        else if (!/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/.test(this.config.credentials.email)) {
+        else if (!/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/.test(this.data.credentials.email)) {
           this.errorMessage = "Enter a proper Email ID";
           this.$.errorToast.open();
         }
-        else if (!this.config.credentials.password) {
+        else if (!this.data.credentials.password) {
           this.errorMessage = "Password is required";
           this.$.errorToast.open();
         }
-        else if (this.config.credentials.password.length != 8) {
+        else if (this.data.credentials.password.length != 8) {
           this.errorMessage = "Password must have 8 characters";
           this.$.errorToast.open();
         }
@@ -111,9 +128,21 @@
         }
       },
 
+      reset: function () {
+        localStorage.clear();
+        this.$.email.value = '';
+        this.$.password.value = '';
+        this.$.email.focus();
+      },
+
       handleResponse: function (event) {
         var response = event.detail.response;
-        if (response.success) this.set('route.path', '/dashboard');
+        if (response.success) {
+          this.data.event = response.event;
+          this.data.round = response.round;
+          this.data.participations = response.participations;
+          this.set('route.path', '/dashboard');
+        }
         else {
           if (response.error.indexOf('email') != -1) {
             this.$.email.value = "";
@@ -129,6 +158,7 @@
       },
 
       handleError: function () {
+        localStorage.clear();
         this.errorMessage = "Internet Required";
         this.$.errorToast.open();
       }
