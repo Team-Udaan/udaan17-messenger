@@ -153,13 +153,15 @@
       },
 
       stringifyStatus: function (status) {
-        if (status == '!') return 'Sending';
-        if (status == 'D') return 'Delivered';
-        if (status == 'U') return 'Undelivered';
-        if (status == 'I') return 'Invalid number';
-        if (status == 'P' || status == '?') return 'Pending';
-        if (status == 'B') return 'Blocked';
-        if (status == 'E') return 'Expired';
+        if (status) {
+          if (status[status.length - 1] == '!') return 'Sending';
+          if (status[status.length - 1] == 'D') return 'Delivered';
+          if (status[status.length - 1] == 'U') return 'Undelivered';
+          if (status[status.length - 1] == 'I') return 'Invalid number';
+          if (status[status.length - 1] == 'P' || status[status.length - 1] == '?') return 'Pending';
+          if (status[status.length - 1] == 'B') return 'Blocked';
+          if (status[status.length - 1] == 'E') return 'Expired';
+        }
       },
 
       isEmpty: function (array) {
@@ -167,6 +169,10 @@
       },
 
       promote: function () {
+        this.$.confirmationDialog.open();
+      },
+
+      sendMessages: function () {
         this.participationIds = this.$.table.selectedItems.map(function (item) {
           return item.id;
         });
@@ -178,10 +184,6 @@
           time: this.date,
           venue: this.venue
         };
-        this.$.confirmationDialog.open();
-      },
-
-      sendMessages: function () {
         this.$.ajax.generateRequest();
       },
 
