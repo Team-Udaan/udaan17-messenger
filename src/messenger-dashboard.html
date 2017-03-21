@@ -18,7 +18,7 @@
         @apply(--action-button);
         @apply(--layout-self-center);
         font-size: 15px;
-        margin-top: 20px;
+        margin: 20px 0;
       }
 
       #promote[disabled] {
@@ -181,7 +181,7 @@
           password: this.data.credentials.password,
           round: this.nextRound,
           participationIds: this.participationIds,
-          time: this.date,
+          time: this.date.toISOString(),
           venue: this.venue
         };
         this.$.ajax.generateRequest();
